@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>慶應経済 進級・卒業チェッカー 2026</title>
+  <style>
+    :root{
+      --bg:#081222;
+      --bg2:#10213a;
+      --panel:#122746;
+      --panel2:#18345f;
+      --line:rgba(255,255,255,.12);
+      --text:#eef4ff;
+      --muted:#bfd0ef;
+      --accent:#9dd4ff;
+      --accent-strong:#69b7ff;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --bad:#f87171;
+      --chip:rgba(255,255,255,.05);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(105,183,255,.22), transparent 26%),
+        radial-gradient(circle at left 20%, rgba(52,211,153,.14), transparent 22%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+    .wrap{max-width:1320px;margin:0 auto;padding:28px 18px 72px}
+    h1{font-size:clamp(28px,4vw,44px);margin:0 0 12px}
+    h2{margin:0 0 8px;font-size:22px}
+    h3{margin:0 0 8px;font-size:18px}
+    p{margin:0}
+    .lead{color:var(--muted);line-height:1.8;margin-bottom:18px}
+    .note{
+      margin-bottom:22px;
+      padding:16px 18px;
+      border:1px solid rgba(157,212,255,.25);
+      border-radius:18px;
+      background:rgba(157,212,255,.08);
+      color:#dfeeff;
+      line-height:1.7;
+      font-size:14px;
+    }
+    .layout{display:grid;grid-template-columns:1.08fr .92fr;gap:20px}
+    .card{
+      background:rgba(18,39,70,.94);
+      border:1px solid var(--line);
+      border-radius:24px;
+      overflow:hidden;
+      backdrop-filter:blur(10px);
+    }
+    .inner{padding:22px}
+    .desc{color:var(--muted);font-size:14px;line-height:1.7;margin:0 0 18px}
+    .section{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .full{grid-column:1/-1}
+    label{display:block;font-size:13px;font-weight:800;margin-bottom:6px}
+    .sub{display:block;color:var(--muted);font-size:12px;line-height:1.55;margin-top:6px}
+    input,select{
+      width:100%;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:var(--panel2);
+      color:var(--text);
+      font-size:15px;
+    }
+    input[readonly]{background:#213f70;color:#e8f2ff;font-weight:800}
+    .course-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .course{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:14px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:var(--chip);
+    }
+    .course input[type="checkbox"]{
+      width:18px;
+      height:18px;
+      margin-top:3px;
+      accent-color:var(--accent-strong);
+      flex:0 0 auto;
+    }
+    .course strong{display:block;font-size:14px;line-height:1.45}
+    .course small{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin-top:4px}
+    .badge{
+      display:inline-block;
+      margin-top:6px;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      color:#dbeeff;
+      background:rgba(105,183,255,.15);
+      border:1px solid rgba(105,183,255,.18);
+    }
+    details.fold{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    details.fold + details.fold{margin-top:12px}
+    details.fold summary{
+      list-style:none;
+      cursor:pointer;
+      padding:14px 16px;
+      font-weight:800;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background:rgba(255,255,255,.04);
+    }
+    details.fold summary::-webkit-details-marker{display:none}
+    .fold-meta{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:600;
+    }
+    .fold-body{padding:14px}
+    .status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:16px}
+    .box{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:16px}
+    .box .k{font-size:13px;color:var(--muted);margin-bottom:8px}
+    .box .v{font-size:24px;font-weight:900}
+    .ok{color:var(--ok)}
+    .warn{color:var(--warn)}
+    .bad{color:var(--bad)}
+    .pillrow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      color:#dcebff;
+      font-size:12px;
+    }
+    .summary{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px 16px;
+      white-space:pre-wrap;
+      line-height:1.75;
+      margin-bottom:16px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+    }
+    th,td{
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      text-align:left;
+      vertical-align:top;
+      font-size:14px;
+    }
+    th{background:rgba(255,255,255,.05)}
+    tr:last-child td{border-bottom:none}
+    .divider td{background:rgba(255,255,255,.05);font-weight:900;color:#dfe8ff}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    button{
+      border:none;
+      border-radius:14px;
+      padding:12px 18px;
+      font-weight:800;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .primary{background:var(--accent);color:#081222}
+    .ghost{background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.12)}
+    .help{margin-top:18px;color:var(--muted);font-size:13px;line-height:1.75}
+    @media (max-width:980px){
+      .layout,.grid,.status,.course-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>慶應経済 進級・卒業チェッカー 2026</h1>
+  <p class="lead">2026年度の履修案内をもとに、日吉の進級条件と三田の進級・卒業条件を確認する単体Webアプリです。A/Bタイプ別の基礎教育科目・専門基礎科目は、科目ごとのチェックから自動計算します。</p>
+  <div class="note">
+    <strong>参照した資料</strong>: 「2026年度 経済学部履修案内（日吉）」と「2026年度 経済学部履修案内（三田キャンパス 第3・4学年）」。
+    <br><strong>注意</strong>: 留学認定、相殺、9月卒業、早期卒業、履修上限外扱いの特殊ケースは個別事情で変わるので、最終確認は成績表と履修案内で行ってください。
+  </div>
+
+  <div class="layout">
+    <section class="card">
+      <div class="inner">
+        <h2>入力</h2>
+        <p class="desc">進級・卒業判定に必要な最低限の項目に絞っています。基礎教育科目と専門基礎科目は、下のチェックから単位数を自動計算します。</p>
+
+        <div class="grid">
+          <div>
+            <label for="grade">現在の学年</label>
+            <select id="grade">
+              <option value="1">1年</option>
+              <option value="2">2年</option>
+              <option value="3">3年</option>
+              <option value="4">4年</option>
+            </select>
+          </div>
+          <div>
+            <label for="semester">現在の学期</label>
+            <select id="semester">
+              <option value="spring">春学期</option>
+              <option value="fall">秋学期</option>
+            </select>
+          </div>
+          <div>
+            <label for="type">履修タイプ</label>
+            <select id="type">
+              <option value="A">Aタイプ</option>
+              <option value="B">Bタイプ</option>
+            </select>
+          </div>
+          <div>
+            <label for="typeSummary">タイプ別メモ</label>
+            <input id="typeSummary" readonly>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>累計と学年別入力</h3>
+          <div class="grid">
+            <div>
+              <label for="totalCredits">累計取得単位数</label>
+              <input id="totalCredits" readonly>
+              <span class="sub">1・2年累計、専門教育、自主選択などから自動計算します。</span>
+            </div>
+            <div>
+              <label for="year12TotalCredits">1・2年累計取得単位数</label>
+              <input id="year12TotalCredits" readonly>
+              <span class="sub">総合教育・基礎教育・外国語・専門基礎・その他日吉単位から自動計算します。</span>
+            </div>
+            <div>
+              <label for="thirdYearCountedCredits">3年次の24単位判定対象単位</label>
+              <input id="thirdYearCountedCredits" type="number" min="0" value="0">
+              <span class="sub">3年で判定対象に入る単位だけを入力します。日吉取り残し必修や履修上限外は含めません。</span>
+            </div>
+            <div>
+              <label for="fourthYearCountedCredits">4年次の12単位判定対象単位</label>
+              <input id="fourthYearCountedCredits" type="number" min="0" value="0">
+              <span class="sub">4年で判定対象に入る単位だけを入力します。日吉取り残し必修や履修上限外は含めません。</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>基礎教育科目</h3>
+          <p class="desc">日吉の基礎教育科目。科目ごとの取得状況から、2→3進級に必要な4単位、3→4進級・卒業で使う8単位を自動計算します。</p>
+          <div class="grid">
+            <div class="full">
+              <div class="course-grid" id="baseCourses"></div>
+            </div>
+            <div>
+              <label for="baseCredits">基礎教育科目の取得単位</label>
+              <input id="baseCredits" readonly>
+            </div>
+            <div>
+              <label for="baseProgressCredits">進級判定に使う基礎教育単位</label>
+              <input id="baseProgressCredits" readonly>
+              <span class="sub">基礎教育科目はこのアプリでは全取得単位をそのまま進級判定に使います。</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>外国語科目</h3>
+          <p class="desc">外国語の合計単位は下の項目から自動計算します。選択必修6単位は、よくある「英語セミナー2科目」パターンと、「英語セミナー + 別語種4単位」パターンの両方を判定できるようにしています。</p>
+          <div class="grid">
+            <div>
+              <label for="foreignCredits">外国語科目の合計単位</label>
+              <input id="foreignCredits" readonly>
+              <span class="sub">下の内訳から自動計算します。</span>
+            </div>
+            <div>
+              <label for="englishStudySkills">英語 Study Skills 2単位</label>
+              <select id="englishStudySkills">
+                <option value="done">取得済み</option>
+                <option value="notyet">未取得</option>
+              </select>
+            </div>
+            <div>
+              <label for="requiredForeign2Credits">必修の第二外国語 取得単位</label>
+              <input id="requiredForeign2Credits" type="number" min="0" max="6" value="0">
+              <span class="sub">1年次の必修外国語II。6単位そろうと卒業要件を満たします。</span>
+            </div>
+            <div>
+              <label for="englishElectiveCredits">英語セミナー・英語リーディング等</label>
+              <input id="englishElectiveCredits" type="number" min="0" value="0">
+              <span class="sub">選択必修の「外国語I」枠。2単位以上あると最低条件を満たします。</span>
+            </div>
+            <div>
+              <label for="sameLanguageAdvancedCredits">同じ第二外国語の続き</label>
+              <input id="sameLanguageAdvancedCredits" type="number" min="0" value="0">
+              <span class="sub">同語種の外国語IIを続けて取った分。2単位ずつ入れてください。</span>
+            </div>
+            <div>
+              <label for="otherLanguageCredits">別語種（外国語IIIなど）</label>
+              <input id="otherLanguageCredits" type="number" min="0" value="0">
+              <span class="sub">別語種を取った場合。典型例は 4 単位です。</span>
+            </div>
+            <div>
+              <label for="extraForeignCredits">その他の外国語単位</label>
+              <input id="extraForeignCredits" type="number" min="0" value="0">
+              <span class="sub">卒業所要14単位に入るが、主要条件の判定には直接使わない分があれば入れてください。</span>
+            </div>
+            <div>
+              <label for="foreignElectiveStatus">選択必修6単位の判定</label>
+              <input id="foreignElectiveStatus" readonly>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>専門基礎科目</h3>
+          <p class="desc">2→3進級は合計10単位以上、3→4進級は合計16単位以上で判定します。卒業ではタイプ別必修12単位に加えて、選択必修4単位も必要です。</p>
+          <div class="grid">
+            <div class="full">
+              <label>タイプ別必修</label>
+              <div class="course-grid" id="foundationRequired"></div>
+            </div>
+            <div class="full">
+              <label>選択必修科目</label>
+              <div class="course-grid" id="foundationElectives"></div>
+            </div>
+            <div>
+              <label for="foundationCredits">専門基礎科目の取得単位</label>
+              <input id="foundationCredits" readonly>
+            </div>
+            <div>
+              <label for="foundationElectiveCredits">選択必修の取得単位</label>
+              <input id="foundationElectiveCredits" readonly>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>日吉の特殊科目</h3>
+          <p class="desc">日吉で取る特殊科目も、1・2年累計取得単位数に自動で反映します。代表的なものを入れてあります。</p>
+          <div class="grid">
+            <div class="full">
+              <div class="course-grid" id="specialCourses"></div>
+            </div>
+            <div>
+              <label for="specialCredits">特殊科目の取得単位</label>
+              <input id="specialCredits" readonly>
+            </div>
+            <div>
+              <label for="year12OtherCredits">その他の日吉単位</label>
+              <input id="year12OtherCredits" type="number" min="0" value="0">
+              <span class="sub">体育・自由科目など、上の欄に入っていない1・2年次単位があればここに入れてください。</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>卒業区分の単位数</h3>
+          <p class="desc">ここは成績表の区分に合わせて入力する欄です。総合教育・専門教育・自主選択の合計を見ながら、126単位と区分要件を確認します。</p>
+          <div class="grid">
+            <div>
+              <label for="general1">総合教育科目 I系</label>
+              <input id="general1" type="number" min="0" value="0">
+            </div>
+            <div>
+              <label for="general2">総合教育科目 II系</label>
+              <input id="general2" type="number" min="0" value="0">
+            </div>
+            <div>
+              <label for="general3">総合教育科目 III系</label>
+              <input id="general3" type="number" min="0" value="0">
+            </div>
+            <div>
+              <label for="generalTotal">総合教育科目 合計</label>
+              <input id="generalTotal" readonly>
+            </div>
+            <div>
+              <label for="majorBasicCredits">基本科目 単位</label>
+              <input id="majorBasicCredits" readonly>
+            </div>
+            <div>
+              <label for="majorSpecialCredits">特殊科目 単位</label>
+              <input id="majorSpecialCredits" readonly>
+            </div>
+            <div>
+              <label for="relatedCredits">関連科目 単位</label>
+              <input id="relatedCredits" type="number" min="0" value="0">
+              <span class="sub">関連科目は個別科目ではなく、取得単位数だけ入れる形にしています。</span>
+            </div>
+            <div>
+              <label for="majorCredits">専門教育科目 合計</label>
+              <input id="majorCredits" readonly>
+              <span class="sub">基本科目・特殊科目・関連科目から自動計算します。</span>
+            </div>
+            <div>
+              <label for="basicFields12">基本科目12単位・3分野以上</label>
+              <input id="basicFields12" readonly>
+            </div>
+            <div class="full" id="majorBasicSection" hidden>
+              <label>基本科目チェック</label>
+              <div id="majorBasicCourses"></div>
+              <span class="sub">3年・4年のときだけ表示します。チェックした科目から、基本科目単位と「3分野以上・12単位」を自動判定します。</span>
+            </div>
+            <div class="full" id="majorSpecialSection" hidden>
+              <label>特殊科目（三田）チェック</label>
+              <div id="majorSpecialCourses"></div>
+              <span class="sub">クリックすると三田の特殊科目一覧が開きます。チェックした科目から特殊科目単位を自動計算します。</span>
+            </div>
+            <div>
+              <label for="electiveCredits">自主選択科目 合計</label>
+              <input id="electiveCredits" readonly>
+              <span class="sub">卒業単位認定科目として回る超過分と、自主選択に入る科目から自動計算します。</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>自主選択科目の内訳</h3>
+          <p class="desc">履修案内の「卒業単位認定科目」と、自主選択に直接入る科目から自動計算します。各区分の最低必要数を超えた分だけ、自主選択科目に算入されます。</p>
+          <div class="grid">
+            <div>
+              <label for="choiceForeignACredits">選択外国語A</label>
+              <input id="choiceForeignACredits" type="number" min="0" value="0">
+            </div>
+            <div>
+              <label for="peLectureCredits">体育学講義 I・II</label>
+              <input id="peLectureCredits" type="number" min="0" value="0">
+            </div>
+            <div>
+              <label for="peSeminarCredits">体育学演習</label>
+              <input id="peSeminarCredits" type="number" min="0" value="0">
+            </div>
+            <div>
+              <label for="pePracticeCredits">体育実技 A/B</label>
+              <input id="pePracticeCredits" type="number" min="0" value="0">
+              <span class="sub">履修案内上は最大6単位まで自主選択に入ります。</span>
+            </div>
+            <div>
+              <label for="instituteCredits">諸研究所設置科目など</label>
+              <input id="instituteCredits" type="number" min="0" value="0">
+            </div>
+            <div>
+              <label for="electiveDetail">自主選択の算入メモ</label>
+              <input id="electiveDetail" readonly>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="calcBtn" type="button">判定する</button>
+          <button class="ghost" id="sampleBtn" type="button">サンプル入力</button>
+          <button class="ghost" id="resetBtn" type="button">リセット</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="inner">
+        <h2>判定結果</h2>
+        <p class="desc">春学期は「秋までに不足を埋めれば届くか」、秋学期は「その年度末に進級・卒業できるか」を表示します。</p>
+        <div class="pillrow">
+          <span class="pill">1→2: 24単位</span>
+          <span class="pill">2→3: 60単位 + 基礎4 + 外国語8 + 専門基礎10</span>
+          <span class="pill">3→4: 基礎8 + 専門基礎16 + 3年24</span>
+          <span class="pill">卒業: 126単位 + 区分要件 + 4年12</span>
+        </div>
+        <div class="status">
+          <div class="box"><div class="k" id="status1Label">進級関連</div><div class="v" id="status1">未判定</div></div>
+          <div class="box"><div class="k" id="status2Label">卒業関連</div><div class="v" id="status2">未判定</div></div>
+        </div>
+        <div class="summary" id="summary">まだ判定していません。</div>
+        <table>
+          <thead>
+            <tr><th>項目</th><th>基準</th><th>現在</th><th>不足 / 判定</th><th>状況</th></tr>
+          </thead>
+          <tbody id="detailBody"></tbody>
+        </table>
+        <div class="help">このチェッカーは 2026 年度履修案内に基づく自己確認用です。成績表の区分ミス、留学認定、履修上限外扱い、相殺、9月卒業、3.5年早期卒業は別途確認してください。</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const specialCourses = [
+  { id: 'special_bookkeeping_a', label: '簿記 a', credits: 2, note: '特殊科目' },
+  { id: 'special_bookkeeping_b', label: '簿記 b', credits: 2, note: '特殊科目' },
+  { id: 'special_analysis1', label: '解析学入門 I', credits: 2, note: '特殊科目' },
+  { id: 'special_analysis2', label: '解析学入門 II', credits: 2, note: '特殊科目' },
+  { id: 'special_probability1', label: '確率論入門 I', credits: 2, note: '特殊科目' },
+  { id: 'special_probability2', label: '確率論入門 II', credits: 2, note: '特殊科目' },
+  { id: 'special_finance', label: '金融リテラシー', credits: 2, note: '特殊科目' }
+];
+
+const majorBasicCourses = [
+  { id: 'mb_micro1_a', label: 'ミクロ経済学中級Ia', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_micro1_b', label: 'ミクロ経済学中級Ib', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_micro2_a', label: 'ミクロ経済学中級IIa', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_micro2_b', label: 'ミクロ経済学中級IIb', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_macro1_a', label: 'マクロ経済学中級Ia', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_macro1_b', label: 'マクロ経済学中級Ib', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_macro2_a', label: 'マクロ経済学中級IIa', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_macro2_b', label: 'マクロ経済学中級IIb', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_game_a', label: 'ゲーム理論a', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_game_b', label: 'ゲーム理論b', credits: 2, field: 'A', note: '経済理論' },
+  { id: 'mb_metrics_mid_a', label: '計量経済学中級a', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_metrics_mid_b', label: '計量経済学中級b', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_metrics_adv_a', label: '計量経済学上級a', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_metrics_adv_b', label: '計量経済学上級b', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_prob_stats_a', label: '確率・統計a', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_prob_stats_b', label: '確率・統計b', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_bayes_a', label: 'ベイズ統計学a', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_bayes_b', label: 'ベイズ統計学b', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_timeseries_a', label: '時系列分析a', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_timeseries_b', label: '時系列分析b', credits: 2, field: 'B', note: '計量・統計' },
+  { id: 'mb_history_thought1_a', label: '経済学史Ia', credits: 2, field: 'C', note: '学史・思想史' },
+  { id: 'mb_history_thought1_b', label: '経済学史Ib', credits: 2, field: 'C', note: '学史・思想史' },
+  { id: 'mb_history_thought2_a', label: '経済学史IIa', credits: 2, field: 'C', note: '学史・思想史' },
+  { id: 'mb_history_thought2_b', label: '経済学史IIb', credits: 2, field: 'C', note: '学史・思想史' },
+  { id: 'mb_social_thought_a', label: '社会思想a', credits: 2, field: 'C', note: '学史・思想史' },
+  { id: 'mb_social_thought_b', label: '社会思想b', credits: 2, field: 'C', note: '学史・思想史' },
+  { id: 'mb_social_thought_hist_a', label: '社会思想史a', credits: 2, field: 'C', note: '学史・思想史' },
+  { id: 'mb_social_thought_hist_b', label: '社会思想史b', credits: 2, field: 'C', note: '学史・思想史' },
+  { id: 'mb_japan_hist_a', label: '日本経済史a', credits: 2, field: 'D', note: '経済史' },
+  { id: 'mb_japan_hist_b', label: '日本経済史b', credits: 2, field: 'D', note: '経済史' },
+  { id: 'mb_west_hist_a', label: '欧米経済史a', credits: 2, field: 'D', note: '経済史' },
+  { id: 'mb_west_hist_b', label: '欧米経済史b', credits: 2, field: 'D', note: '経済史' },
+  { id: 'mb_asia_hist_a', label: 'アジア経済史a', credits: 2, field: 'D', note: '経済史' },
+  { id: 'mb_asia_hist_b', label: 'アジア経済史b', credits: 2, field: 'D', note: '経済史' },
+  { id: 'mb_industry_a', label: '工業経済論a', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_industry_b', label: '工業経済論b', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_org_a', label: '産業組織a', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_org_b', label: '産業組織b', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_labor_a', label: '労働経済学a', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_labor_b', label: '労働経済学b', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_social_policy_a', label: '社会政策a', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_social_policy_b', label: '社会政策b', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_medical_a', label: '医療経済学a', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_medical_b', label: '医療経済学b', credits: 2, field: 'E', note: '産業・労働' },
+  { id: 'mb_policy_a', label: '経済政策論a', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_policy_b', label: '経済政策論b', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_public_fin_a', label: '財政論a', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_public_fin_b', label: '財政論b', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_money_a', label: '金融論a', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_money_b', label: '金融論b', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_japan_system_a', label: '日本経済システム論a', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_japan_system_b', label: '日本経済システム論b', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_regulation', label: '規制改革の経済学', credits: 2, field: 'F', note: '制度・政策' },
+  { id: 'mb_modern_japan_a', label: '現代日本経済論a', credits: 2, field: 'G', note: '現代経済' },
+  { id: 'mb_modern_japan_b', label: '現代日本経済論b', credits: 2, field: 'G', note: '現代経済' },
+  { id: 'mb_japan_capitalism_a', label: '日本資本主義発達史a', credits: 2, field: 'G', note: '現代経済' },
+  { id: 'mb_japan_capitalism_b', label: '日本資本主義発達史b', credits: 2, field: 'G', note: '現代経済' },
+  { id: 'mb_modern_capitalism_a', label: '現代資本主義論a', credits: 2, field: 'G', note: '現代経済' },
+  { id: 'mb_modern_capitalism_b', label: '現代資本主義論b', credits: 2, field: 'G', note: '現代経済' },
+  { id: 'mb_system_a', label: '経済体制論a', credits: 2, field: 'G', note: '現代経済' },
+  { id: 'mb_system_b', label: '経済体制論b', credits: 2, field: 'G', note: '現代経済' },
+  { id: 'mb_trade_a', label: '国際貿易論a', credits: 2, field: 'H', note: '国際経済' },
+  { id: 'mb_trade_b', label: '国際貿易論b', credits: 2, field: 'H', note: '国際経済' },
+  { id: 'mb_international_fin_a', label: '国際金融論a', credits: 2, field: 'H', note: '国際経済' },
+  { id: 'mb_international_fin_b', label: '国際金融論b', credits: 2, field: 'H', note: '国際経済' },
+  { id: 'mb_development_a', label: '開発経済論a', credits: 2, field: 'H', note: '国際経済' },
+  { id: 'mb_development_b', label: '開発経済論b', credits: 2, field: 'H', note: '国際経済' },
+  { id: 'mb_geography_a', label: '経済地理a', credits: 2, field: 'I', note: '環境関連' },
+  { id: 'mb_geography_b', label: '経済地理b', credits: 2, field: 'I', note: '環境関連' },
+  { id: 'mb_environment_a', label: '環境経済論a', credits: 2, field: 'I', note: '環境関連' },
+  { id: 'mb_environment_b', label: '環境経済論b', credits: 2, field: 'I', note: '環境関連' },
+  { id: 'mb_city_a', label: '都市経済論a', credits: 2, field: 'I', note: '環境関連' },
+  { id: 'mb_city_b', label: '都市経済論b', credits: 2, field: 'I', note: '環境関連' },
+  { id: 'mb_population_a', label: '人口論a', credits: 2, field: 'J', note: '社会関連' },
+  { id: 'mb_population_b', label: '人口論b', credits: 2, field: 'J', note: '社会関連' },
+  { id: 'mb_social_hist_a', label: '社会史a', credits: 2, field: 'J', note: '社会関連' },
+  { id: 'mb_social_hist_b', label: '社会史b', credits: 2, field: 'J', note: '社会関連' }
+];
+
+const majorSpecialCourses = [
+  { id: 'ms_analysis1_a', label: '解析学Ia', credits: 2 },
+  { id: 'ms_analysis1_b', label: '解析学Ib', credits: 2 },
+  { id: 'ms_analysis2_a', label: '解析学IIa', credits: 2 },
+  { id: 'ms_analysis2_b', label: '解析学IIb', credits: 2 },
+  { id: 'ms_public_a', label: '公共経済学a', credits: 2 },
+  { id: 'ms_public_b', label: '公共経済学b', credits: 2 },
+  { id: 'ms_diffeq_a', label: '数理経済学特論I［微分方程式論］a', credits: 2 },
+  { id: 'ms_diffeq_b', label: '数理経済学特論I［微分方程式論］b', credits: 2 },
+  { id: 'ms_probability_a', label: '数理経済学特論II［確率論］a', credits: 2 },
+  { id: 'ms_probability_b', label: '数理経済学特論II［確率論］b', credits: 2 },
+  { id: 'ms_algebra_a', label: '代数学a', credits: 2 },
+  { id: 'ms_algebra_b', label: '代数学b', credits: 2 },
+  { id: 'ms_mechanism_a', label: 'メカニズムデザインa', credits: 2 },
+  { id: 'ms_mechanism_b', label: 'メカニズムデザインb', credits: 2 },
+  { id: 'ms_theory_practice', label: '経済学:理論と実践', credits: 2 },
+  { id: 'ms_org_econ_a', label: '組織の経済学a', credits: 2 },
+  { id: 'ms_quantum_market', label: '量子技術とマーケットデザイン', credits: 2 },
+  { id: 'ms_econ_stats_a', label: '経済統計a', credits: 2 },
+  { id: 'ms_econ_stats_b', label: '経済統計b', credits: 2 },
+  { id: 'ms_startup_a', label: 'スタートアップとビジネスイノベーションa', credits: 2 },
+  { id: 'ms_startup_b', label: 'スタートアップとビジネスイノベーションb', credits: 2 },
+  { id: 'ms_token_a', label: 'トークンエコノミーの理論と実践a', credits: 2 },
+  { id: 'ms_token_b', label: 'トークンエコノミーの理論と実践b', credits: 2 },
+  { id: 'ms_ds_consulting', label: 'データサイエンス・コンサルティング', credits: 2 },
+  { id: 'ms_methodology', label: '計量経済学方法論', credits: 2 },
+  { id: 'ms_thought_hist_a', label: '日本経済思想史a', credits: 2 },
+  { id: 'ms_thought_hist_b', label: '日本経済思想史b', credits: 2 },
+  { id: 'ms_east_europe_a', label: '東欧経済史a', credits: 2 },
+  { id: 'ms_east_europe_b', label: '東欧経済史b', credits: 2 },
+  { id: 'ms_econ_history', label: '経済史', credits: 2 },
+  { id: 'ms_japan_history_topics', label: '日本経済史各論', credits: 2 },
+  { id: 'ms_modern_japan_history_a', label: '現代日本経済史a', credits: 2 },
+  { id: 'ms_sea_history', label: '東南アジア経済史', credits: 2 },
+  { id: 'ms_asia_history_topics', label: 'アジア経済史各論', credits: 2 },
+  { id: 'ms_middle_east', label: '中東イスラーム経済史概論', credits: 2 },
+  { id: 'ms_env_history', label: '経済と環境の歴史', credits: 2 },
+  { id: 'ms_welfare', label: '社会福祉論', credits: 2 },
+  { id: 'ms_welfare_value', label: '公共私による新しい福祉価値の創造', credits: 2 },
+  { id: 'ms_business_econ', label: 'ビジネス・エコノミクス', credits: 2 },
+  { id: 'ms_experiment', label: '実験経済学', credits: 2 },
+  { id: 'ms_agri_a', label: '農業経済論a', credits: 2 },
+  { id: 'ms_agri_b', label: '農業経済論b', credits: 2 },
+  { id: 'ms_asset_market_a', label: '金融資産市場論a', credits: 2 },
+  { id: 'ms_asset_market_b', label: '金融資産市場論b', credits: 2 },
+  { id: 'ms_policy_micro_a', label: '経済政策のミクロ分析a', credits: 2 },
+  { id: 'ms_policy_micro_b', label: '経済政策のミクロ分析b', credits: 2 },
+  { id: 'ms_corporate_fin_a', label: '企業金融論a', credits: 2 },
+  { id: 'ms_corporate_fin_b', label: '企業金融論b', credits: 2 },
+  { id: 'ms_policy_eval', label: '政策評価の理論と実践', credits: 2 },
+  { id: 'ms_finance_a', label: 'ファイナンス論a', credits: 2 },
+  { id: 'ms_finance_b', label: 'ファイナンス論b', credits: 2 },
+  { id: 'ms_media_policy', label: 'メディア報道と経済政策', credits: 2 },
+  { id: 'ms_inequality_a', label: '格差と援助の経済学a', credits: 2 },
+  { id: 'ms_inequality_b', label: '格差と援助の経済学b', credits: 2 },
+  { id: 'ms_microfinance', label: 'マイクロファイナンス論', credits: 2 },
+  { id: 'ms_fieldwork_mid', label: '中級フィールドワーク論', credits: 2 },
+  { id: 'ms_eu_japan', label: 'EUと日本の経済関係', credits: 2 },
+  { id: 'ms_behavior_a', label: '国際経済と行動経済学a', credits: 2 },
+  { id: 'ms_trade_policy_a', label: '貿易政策a', credits: 2 },
+  { id: 'ms_trade_policy_b', label: '貿易政策b', credits: 2 },
+  { id: 'ms_growth_a', label: '経済発展論a', credits: 2 },
+  { id: 'ms_growth_b', label: '経済発展論b', credits: 2 },
+  { id: 'ms_sustainability_a', label: 'サステナビリティ論a', credits: 2 },
+  { id: 'ms_sustainability_b', label: 'サステナビリティ論b', credits: 2 },
+  { id: 'ms_fiscal_soc_a', label: '財政社会学a', credits: 2 },
+  { id: 'ms_fiscal_soc_b', label: '財政社会学b', credits: 2 },
+  { id: 'ms_japan_docs_a', label: '日本史史料講読a', credits: 2 },
+  { id: 'ms_japan_docs_b', label: '日本史史料講読b', credits: 2 },
+  { id: 'ms_bookkeeping_a', label: '簿記a', credits: 2 },
+  { id: 'ms_bookkeeping_b', label: '簿記b', credits: 2 },
+  { id: 'ms_independent1', label: '自由研究特修I', credits: 2 },
+  { id: 'ms_independent2', label: '自由研究特修II', credits: 2 },
+  { id: 'ms_seminar1', label: '研究会特修I', credits: 2 },
+  { id: 'ms_seminar2', label: '研究会特修II', credits: 2 },
+  { id: 'ms_global_hr', label: 'グローバル人材マネジメント', credits: 2 },
+  { id: 'ms_life_insurance', label: '生命保険概論', credits: 2 },
+  { id: 'ms_insurance_math', label: '生命保険数学特別講義', credits: 2 },
+  { id: 'ms_eu_competition', label: 'EU競争法', credits: 2 },
+  { id: 'ms_applied_finance', label: '応用ファイナンス', credits: 2 },
+  { id: 'ms_finance_topics', label: 'ファイナンス特論', credits: 2 },
+  { id: 'ms_fiscal', label: '財政論', credits: 2 },
+  { id: 'ms_globalization', label: 'グローバリゼーションの経済学', credits: 2 },
+  { id: 'ms_governance', label: 'フィナンシャルマネージメントとコーポレートガバナンス', credits: 2 },
+  { id: 'ms_resource_env', label: '資源経済・環境と政策', credits: 2 },
+  { id: 'ms_foreign_reading', label: '専門外国書講読', credits: 2 },
+  { id: 'ms_foreign_reading_a', label: '専門外国書講読a', credits: 2 },
+  { id: 'ms_foreign_reading_b', label: '専門外国書講読b', credits: 2 },
+  { id: 'ms_exercise', label: '演習', credits: 1 },
+  { id: 'ms_exercise_a', label: '演習a', credits: 1 },
+  { id: 'ms_exercise_b', label: '演習b', credits: 1 },
+  { id: 'ms_project_a', label: '研究プロジェクトa', credits: 2 },
+  { id: 'ms_project_b', label: '研究プロジェクトb', credits: 2 },
+  { id: 'ms_project_c', label: '研究プロジェクトC', credits: 2 },
+  { id: 'ms_research_a', label: '研究会 a（3年）', credits: 2 },
+  { id: 'ms_research_b', label: '研究会 b（3年）', credits: 2 },
+  { id: 'ms_research_c', label: '研究会 c（4年）', credits: 2 },
+  { id: 'ms_research_d', label: '研究会 d（4年）', credits: 2 },
+  { id: 'ms_thesis', label: '研究会（卒業論文）', credits: 4 },
+  { id: 'ms_pcp_finance', label: 'FINANCE, POLICY AND THE GLOBAL ECONOMY', credits: 2 },
+  { id: 'ms_pcp_study', label: 'INDEPENDENT STUDY', credits: 2 }
+];
+
+const typeData = {
+  A: {
+    summary: 'Aタイプ: 基礎教育は統計I/II・微分積分・線形代数、専門基礎はマクロ・ミクロ初級・経済史入門が軸です。',
+    baseCourses: [
+      { id: 'base_stats1', label: '統計学I', credits: 2, note: '必修' },
+      { id: 'base_stats2', label: '統計学II', credits: 2, note: '必修' },
+      { id: 'base_calc', label: '微分積分', credits: 2, note: '必修' },
+      { id: 'base_linear', label: '線形代数', credits: 2, note: '必修' },
+      { id: 'base_introcalc', label: '微分積分入門', credits: 2, note: '選択' },
+      { id: 'base_linear_adv', label: '線型代数続論', credits: 2, note: '選択' },
+      { id: 'base_japan', label: '日本経済概論', credits: 2, note: '選択' },
+      { id: 'base_history_view', label: '歴史的経済分析の視点', credits: 2, note: '選択' },
+      { id: 'base_info1', label: '情報処理I', credits: 2, note: '選択' },
+      { id: 'base_info2', label: '情報処理II', credits: 2, note: '選択' },
+      { id: 'base_info3', label: '情報処理III', credits: 2, note: '選択' }
+    ],
+    foundationRequired: [
+      { id: 'req_macro', label: 'マクロ経済学初級I/II', credits: 4 },
+      { id: 'req_micro', label: 'ミクロ経済学初級I/II', credits: 4 },
+      { id: 'req_history', label: '経済史入門I/II', credits: 4, altGroup: 'history' },
+      { id: 'req_history_alt', label: '経済史概論I/II（入門の代替）', credits: 4, altGroup: 'history' }
+    ],
+    foundationElectives: [
+      { id: 'elec_env', label: '経済と環境', credits: 2 },
+      { id: 'elec_econometrics', label: '計量経済学概論', credits: 2 },
+      { id: 'elec_thought1', label: '経済思想の歴史I', credits: 2 },
+      { id: 'elec_thought2', label: '経済思想の歴史II', credits: 2 },
+      { id: 'elec_marx1', label: 'マルクス経済学I', credits: 2 },
+      { id: 'elec_marx2', label: 'マルクス経済学II', credits: 2 },
+      { id: 'elec_math1', label: '経済数学I', credits: 2 },
+      { id: 'elec_math2', label: '経済数学II', credits: 2 },
+      { id: 'elec_math3', label: '経済数学III', credits: 2 },
+      { id: 'elec_social1', label: '社会問題I', credits: 2 },
+      { id: 'elec_social2', label: '社会問題II', credits: 2 },
+      { id: 'elec_fieldwork', label: 'フィールドワーク論', credits: 2 }
+    ]
+  },
+  B: {
+    summary: 'Bタイプ: 基礎教育は統計I/II・日本経済概論・歴史的経済分析の視点、専門基礎はマクロ・ミクロ入門・経済史概論が軸です。',
+    baseCourses: [
+      { id: 'base_stats1', label: '統計学I', credits: 2, note: '必修' },
+      { id: 'base_stats2', label: '統計学II', credits: 2, note: '必修' },
+      { id: 'base_japan', label: '日本経済概論', credits: 2, note: '必修' },
+      { id: 'base_history_view', label: '歴史的経済分析の視点', credits: 2, note: '必修' },
+      { id: 'base_introcalc', label: '微分積分入門', credits: 2, note: '選択' },
+      { id: 'base_linear_adv', label: '線型代数続論', credits: 2, note: '選択' },
+      { id: 'base_math_overview1', label: '数学概論I', credits: 2, note: '選択' },
+      { id: 'base_math_overview2', label: '数学概論II', credits: 2, note: '選択' },
+      { id: 'base_calc', label: '微分積分', credits: 2, note: '選択' },
+      { id: 'base_linear', label: '線形代数', credits: 2, note: '選択' },
+      { id: 'base_info1', label: '情報処理I', credits: 2, note: '選択' },
+      { id: 'base_info2', label: '情報処理II', credits: 2, note: '選択' },
+      { id: 'base_info3', label: '情報処理III', credits: 2, note: '選択' }
+    ],
+    foundationRequired: [
+      { id: 'req_macro', label: 'マクロ経済学初級I/II', credits: 4 },
+      { id: 'req_micro', label: 'ミクロ経済学入門I/II', credits: 4, altGroup: 'micro' },
+      { id: 'req_micro_alt', label: 'ミクロ経済学初級I/II（入門の代替）', credits: 4, altGroup: 'micro' },
+      { id: 'req_history', label: '経済史概論I/II', credits: 4 }
+    ],
+    foundationElectives: [
+      { id: 'elec_env', label: '経済と環境', credits: 2 },
+      { id: 'elec_econometrics', label: '計量経済学概論', credits: 2 },
+      { id: 'elec_thought1', label: '経済思想の歴史I', credits: 2 },
+      { id: 'elec_thought2', label: '経済思想の歴史II', credits: 2 },
+      { id: 'elec_marx1', label: 'マルクス経済学I', credits: 2 },
+      { id: 'elec_marx2', label: 'マルクス経済学II', credits: 2 },
+      { id: 'elec_math1', label: '経済数学I', credits: 2 },
+      { id: 'elec_math2', label: '経済数学II', credits: 2 },
+      { id: 'elec_math3', label: '経済数学III', credits: 2 },
+      { id: 'elec_social1', label: '社会問題I', credits: 2 },
+      { id: 'elec_social2', label: '社会問題II', credits: 2 },
+      { id: 'elec_fieldwork', label: 'フィールドワーク論', credits: 2 }
+    ]
+  }
+};
+
+const staticIds = [
+  'grade','semester','type','totalCredits','thirdYearCountedCredits','fourthYearCountedCredits',
+  'englishStudySkills','requiredForeign2Credits','englishElectiveCredits','sameLanguageAdvancedCredits','otherLanguageCredits','extraForeignCredits',
+  'general1','general2','general3','year12OtherCredits','majorBasicCredits','majorSpecialCredits','relatedCredits','basicFields12','electiveCredits',
+  'choiceForeignACredits','peLectureCredits','peSeminarCredits','pePracticeCredits','instituteCredits','electiveDetail'
+];
+
+function num(id){
+  return Math.max(Number($(id).value) || 0, 0);
+}
+
+function done(id){
+  return $(id).value === 'done';
+}
+
+function shortage(now, need){
+  return Math.max(need - now, 0);
+}
+
+function rowNeed(label, need, now){
+  const lack = shortage(now, need);
+  return { label, base: need, current: now, result: lack === 0 ? '達成済み' : `あと ${lack}`, state: lack === 0 ? 'OK' : '不足' };
+}
+
+function rowNeedBool(label, ok){
+  return { label, base: '満たす', current: ok ? '満たしている' : '未達', result: ok ? '達成済み' : '未達', state: ok ? 'OK' : '不足' };
+}
+
+function rowJudge(label, need, now){
+  const ok = now >= need;
+  return { label, base: need, current: now, result: ok ? '達成' : `未達（あと ${need - now}）`, state: ok ? 'OK' : 'NG' };
+}
+
+function rowJudgeBool(label, ok){
+  return { label, base: '満たす', current: ok ? '満たしている' : '未達', result: ok ? '達成' : '未達', state: ok ? 'OK' : 'NG' };
+}
+
+function divider(label){
+  return { divider: true, label };
+}
+
+function renderChecks(targetId, items){
+  $(targetId).innerHTML = items.map(item => `
+    <label class="course">
+      <input type="checkbox" id="${item.id}">
+      <span>
+        <strong>${item.label}</strong>
+        ${item.note ? `<small>${item.note}</small>` : ''}
+        <span class="badge">${item.credits}単位</span>
+      </span>
+    </label>
+  `).join('');
+}
+
+function renderMajorBasicFolds(){
+  const fields = [
+    ['A', 'A 経済理論'],
+    ['B', 'B 計量・統計'],
+    ['C', 'C 学史・思想史'],
+    ['D', 'D 経済史'],
+    ['E', 'E 産業・労働'],
+    ['F', 'F 制度・政策'],
+    ['G', 'G 現代経済'],
+    ['H', 'H 国際経済'],
+    ['I', 'I 環境関連'],
+    ['J', 'J 社会関連']
+  ];
+
+  $('majorBasicCourses').innerHTML = fields.map(([fieldId, label]) => {
+    const items = majorBasicCourses.filter(item => item.field === fieldId);
+    return `
+      <details class="fold">
+        <summary>
+          <span>${label}</span>
+          <span class="fold-meta">${items.length}科目</span>
+        </summary>
+        <div class="fold-body">
+          <div class="course-grid">
+            ${items.map(item => `
+              <label class="course">
+                <input type="checkbox" id="${item.id}">
+                <span>
+                  <strong>${item.label}</strong>
+                  <small>${item.note}</small>
+                  <span class="badge">${item.credits}単位</span>
+                </span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      </details>
+    `;
+  }).join('');
+}
+
+function renderMajorSpecialFold(){
+  $('majorSpecialCourses').innerHTML = `
+    <details class="fold">
+      <summary>
+        <span>特殊科目（三田）</span>
+        <span class="fold-meta">${majorSpecialCourses.length}科目</span>
+      </summary>
+      <div class="fold-body">
+        <div class="course-grid">
+          ${majorSpecialCourses.map(item => `
+            <label class="course">
+              <input type="checkbox" id="${item.id}">
+              <span>
+                <strong>${item.label}</strong>
+                <span class="badge">${item.credits}単位</span>
+              </span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    </details>
+  `;
+}
+
+function getCheckedCredits(items){
+  return items.reduce((sum, item) => sum + ($(item.id)?.checked ? item.credits : 0), 0);
+}
+
+function getFoundationRequiredSummary(items){
+  const altGroups = {};
+  let totalCredits = 0;
+  let requiredDone = true;
+
+  items.forEach(item => {
+    const checked = Boolean($(item.id)?.checked);
+    const credits = checked ? item.credits : 0;
+
+    if (item.altGroup) {
+      altGroups[item.altGroup] = altGroups[item.altGroup] || { done: false, credits: 0 };
+      altGroups[item.altGroup].done = altGroups[item.altGroup].done || checked;
+      altGroups[item.altGroup].credits = Math.max(altGroups[item.altGroup].credits, credits);
+      return;
+    }
+
+    totalCredits += credits;
+    requiredDone = requiredDone && checked;
+  });
+
+  Object.values(altGroups).forEach(group => {
+    totalCredits += group.credits;
+    requiredDone = requiredDone && group.done;
+  });
+
+  return { totalCredits, requiredDone };
+}
+
+function getMajorBasicSummary(){
+  const selected = majorBasicCourses.filter(item => $(item.id)?.checked);
+  const totalCredits = selected.reduce((sum, item) => sum + item.credits, 0);
+  const creditsByField = {};
+
+  selected.forEach(item => {
+    creditsByField[item.field] = (creditsByField[item.field] || 0) + item.credits;
+  });
+
+  const qualifyingFields = Object.values(creditsByField).filter(credits => credits >= 4).length;
+  const requirementDone = totalCredits >= 12 && qualifyingFields >= 3;
+
+  return { totalCredits, qualifyingFields, requirementDone };
+}
+
+function getCheckedCreditsByIds(items){
+  return items.reduce((sum, item) => sum + ($(item.id)?.checked ? item.credits : 0), 0);
+}
+
+function getMajorSpecialSummary(){
+  const rawTotal = getCheckedCredits(majorSpecialCourses);
+  const foreignReadingRaw = getCheckedCreditsByIds([
+    { id: 'ms_foreign_reading', credits: 2 },
+    { id: 'ms_foreign_reading_a', credits: 2 },
+    { id: 'ms_foreign_reading_b', credits: 2 }
+  ]);
+  const exerciseRaw = getCheckedCreditsByIds([
+    { id: 'ms_exercise', credits: 1 },
+    { id: 'ms_exercise_a', credits: 1 },
+    { id: 'ms_exercise_b', credits: 1 }
+  ]);
+  const duplicateBookkeepingCredits =
+    ($('special_bookkeeping_a')?.checked && $('ms_bookkeeping_a')?.checked ? 2 : 0) +
+    ($('special_bookkeeping_b')?.checked && $('ms_bookkeeping_b')?.checked ? 2 : 0);
+  const adjustedRawTotal = Math.max(rawTotal - duplicateBookkeepingCredits, 0);
+  const countedCredits = Math.max(
+    adjustedRawTotal - foreignReadingRaw - exerciseRaw,
+    0
+  ) + cap(foreignReadingRaw, 8) + cap(exerciseRaw, 4);
+
+  return {
+    countedCredits,
+    foreignReadingOverflow: overflow(foreignReadingRaw, 8),
+    exerciseOverflow: overflow(exerciseRaw, 4),
+    duplicateBookkeepingCredits
+  };
+}
+
+function foreignStudySkillsCredits(){
+  return done('englishStudySkills') ? 2 : 0;
+}
+
+function foreignRequired2Credits(){
+  return Math.min(num('requiredForeign2Credits'), 6);
+}
+
+function foreignEnglishElectiveCredits(){
+  return num('englishElectiveCredits');
+}
+
+function foreignSameLanguageCredits(){
+  return num('sameLanguageAdvancedCredits');
+}
+
+function foreignOtherLanguageCredits(){
+  return num('otherLanguageCredits');
+}
+
+function foreignExtraCredits(){
+  return num('extraForeignCredits');
+}
+
+function foreignElectiveSatisfied(){
+  const english = foreignEnglishElectiveCredits();
+  const sameLanguage = foreignSameLanguageCredits();
+  const otherLanguage = foreignOtherLanguageCredits();
+
+  if (english < 2) return false;
+  if (otherLanguage >= 4) return true;
+  return sameLanguage >= 2 && (english + sameLanguage) >= 6;
+}
+
+function cap(value, max){
+  return Math.min(Math.max(value, 0), max);
+}
+
+function overflow(now, limit){
+  return Math.max(now - limit, 0);
+}
+
+function updateTypeSections(){
+  const type = $('type').value;
+  const config = typeData[type];
+  $('typeSummary').value = config.summary;
+  renderChecks('baseCourses', config.baseCourses);
+  renderChecks('foundationRequired', config.foundationRequired);
+  renderChecks('foundationElectives', config.foundationElectives);
+  renderChecks('specialCourses', specialCourses);
+  renderMajorBasicFolds();
+  renderMajorSpecialFold();
+  attachDynamicEvents();
+  updateAutoTotals();
+}
+
+function updateAutoTotals(){
+  const type = $('type').value;
+  const config = typeData[type];
+  const basicSummary = getMajorBasicSummary();
+  const foundationRequiredSummary = getFoundationRequiredSummary(config.foundationRequired);
+  const baseCredits = getCheckedCredits(config.baseCourses);
+  const foundationRequiredCredits = foundationRequiredSummary.totalCredits;
+  const foundationElectiveCredits = getCheckedCredits(config.foundationElectives);
+  const foundationCredits = foundationRequiredCredits + foundationElectiveCredits;
+  const specialCredits = getCheckedCredits(specialCourses);
+  const majorSpecialSummary = getMajorSpecialSummary();
+  const majorSpecialCredits = majorSpecialSummary.countedCredits;
+  const generalTotal = num('general1') + num('general2') + num('general3');
+  const relatedCreditsRaw = num('relatedCredits');
+  const relatedCreditsCounted = cap(relatedCreditsRaw, 12);
+  const relatedOverflow = overflow(relatedCreditsRaw, 12);
+  const majorCredits =
+    foundationCredits +
+    specialCredits +
+    basicSummary.totalCredits +
+    majorSpecialCredits +
+    relatedCreditsCounted;
+  const foreignCredits =
+    foreignStudySkillsCredits() +
+    foreignRequired2Credits() +
+    foreignEnglishElectiveCredits() +
+    foreignSameLanguageCredits() +
+    foreignOtherLanguageCredits() +
+    foreignExtraCredits();
+  const year12Total =
+    generalTotal +
+    baseCredits +
+    foreignCredits +
+    foundationCredits +
+    specialCredits +
+    num('year12OtherCredits');
+  const generalOverflow = overflow(generalTotal, 20);
+  const baseOverflow = overflow(baseCredits, 8);
+  const foreignOverflow = overflow(foreignCredits, 14);
+  const majorOverflow = overflow(majorCredits, 68);
+  const directElectiveCredits =
+    num('choiceForeignACredits') +
+    num('peLectureCredits') +
+    num('peSeminarCredits') +
+    cap(num('pePracticeCredits'), 6) +
+    num('instituteCredits');
+  const electiveCredits =
+    generalOverflow +
+    baseOverflow +
+    foreignOverflow +
+    majorOverflow +
+    relatedOverflow +
+    majorSpecialSummary.foreignReadingOverflow +
+    majorSpecialSummary.exerciseOverflow +
+    directElectiveCredits;
+  const totalCredits =
+    Math.min(generalTotal, 20) +
+    Math.min(baseCredits, 8) +
+    Math.min(foreignCredits, 14) +
+    Math.min(majorCredits, 68) +
+    electiveCredits;
+
+  $('baseCredits').value = baseCredits;
+  $('baseProgressCredits').value = baseCredits;
+  $('foundationCredits').value = foundationCredits;
+  $('foundationElectiveCredits').value = foundationElectiveCredits;
+  $('specialCredits').value = specialCredits;
+  $('generalTotal').value = generalTotal;
+  $('majorBasicCredits').value = basicSummary.totalCredits;
+  $('majorSpecialCredits').value = majorSpecialCredits;
+  $('majorCredits').value = majorCredits;
+  $('foreignCredits').value = foreignCredits;
+  $('year12TotalCredits').value = year12Total;
+  $('electiveCredits').value = electiveCredits;
+  $('totalCredits').value = totalCredits;
+  $('foreignElectiveStatus').value = foreignElectiveSatisfied() ? '満たしている' : '未達';
+  $('electiveDetail').value = `超過: 総合${generalOverflow} / 基礎${baseOverflow} / 外国語${foreignOverflow} / 専門${majorOverflow} / 関連${relatedOverflow} / 外書${majorSpecialSummary.foreignReadingOverflow} / 演習${majorSpecialSummary.exerciseOverflow} | 直入れ: ${directElectiveCredits}${majorSpecialSummary.duplicateBookkeepingCredits ? ` | 簿記重複除外: ${majorSpecialSummary.duplicateBookkeepingCredits}` : ''}`;
+  $('basicFields12').value = basicSummary.requirementDone
+    ? `満たしている（${basicSummary.qualifyingFields}分野）`
+    : `未達（4単位以上の分野 ${basicSummary.qualifyingFields}）`;
+  $('majorBasicSection').hidden = !['3','4'].includes($('grade').value);
+  $('majorSpecialSection').hidden = !['3','4'].includes($('grade').value);
+}
+
+function buildRows(){
+  updateAutoTotals();
+
+  const type = $('type').value;
+  const config = typeData[type];
+  const grade = $('grade').value;
+  const semester = $('semester').value;
+
+  const totalCredits = num('totalCredits');
+  const thirdYearCountedCredits = num('thirdYearCountedCredits');
+  const fourthYearCountedCredits = num('fourthYearCountedCredits');
+  const baseCredits = num('baseCredits');
+  const year12TotalCredits = num('year12TotalCredits');
+  const foreignCredits = num('foreignCredits');
+  const foundationCredits = num('foundationCredits');
+  const foundationElectiveCredits = num('foundationElectiveCredits');
+  const general1 = num('general1');
+  const general2 = num('general2');
+  const generalTotal = num('generalTotal');
+  const majorCredits = num('majorCredits');
+  const electiveCredits = num('electiveCredits');
+  const requiredFoundationDone = getFoundationRequiredSummary(config.foundationRequired).requiredDone;
+  const foundationElectiveDone = foundationElectiveCredits >= 4;
+  const foreign2Done = foreignRequired2Credits() >= 6;
+  const foreignElectiveDone = foreignElectiveSatisfied();
+  const basicSummary = getMajorBasicSummary();
+
+  const promotion12Need = [
+    rowNeed('累計取得単位数', 24, totalCredits)
+  ];
+  const promotion12Judge = [
+    rowJudge('累計取得単位数', 24, totalCredits)
+  ];
+
+  const promotion23Need = [
+    rowNeed('1・2年累計取得単位数', 60, year12TotalCredits),
+    rowNeed('基礎教育科目', 4, baseCredits),
+    rowNeed('外国語科目', 8, foreignCredits),
+    rowNeed('専門基礎科目', 10, foundationCredits)
+  ];
+  const promotion23Judge = [
+    rowJudge('1・2年累計取得単位数', 60, year12TotalCredits),
+    rowJudge('基礎教育科目', 4, baseCredits),
+    rowJudge('外国語科目', 8, foreignCredits),
+    rowJudge('専門基礎科目', 10, foundationCredits)
+  ];
+
+  const promotion34Need = [
+    rowNeed('基礎教育科目', 8, baseCredits),
+    rowNeed('専門基礎科目', 16, foundationCredits),
+    rowNeed('3年次の24単位判定対象単位', 24, thirdYearCountedCredits)
+  ];
+  const promotion34Judge = [
+    rowJudge('基礎教育科目', 8, baseCredits),
+    rowJudge('専門基礎科目', 16, foundationCredits),
+    rowJudge('3年次の24単位判定対象単位', 24, thirdYearCountedCredits)
+  ];
+
+  const graduationNeedRows = [
+    rowNeed('卒業所要単位', 126, totalCredits),
+    rowNeed('総合教育科目 I系', 6, general1),
+    rowNeed('総合教育科目 II系', 10, general2),
+    rowNeed('総合教育科目 合計', 20, generalTotal),
+    rowNeed('基礎教育科目', 8, baseCredits),
+    rowNeed('外国語科目', 14, foreignCredits),
+    rowNeedBool('英語 Study Skills 2単位', done('englishStudySkills')),
+    rowNeedBool('外国語II 6単位', foreign2Done),
+    rowNeedBool('選択必修の外国語6単位', foreignElectiveDone),
+    rowNeed('専門教育科目 合計', 68, majorCredits),
+    rowNeedBool('タイプ別必修12単位', requiredFoundationDone),
+    rowNeedBool('専門基礎の選択必修4単位', foundationElectiveDone),
+    rowNeedBool('基本科目12単位・3分野以上', basicSummary.requirementDone),
+    rowNeed('自主選択科目', 16, electiveCredits),
+    rowNeed('4年次の12単位判定対象単位', 12, fourthYearCountedCredits)
+  ];
+  const graduationJudgeRows = [
+    rowJudge('卒業所要単位', 126, totalCredits),
+    rowJudge('総合教育科目 I系', 6, general1),
+    rowJudge('総合教育科目 II系', 10, general2),
+    rowJudge('総合教育科目 合計', 20, generalTotal),
+    rowJudge('基礎教育科目', 8, baseCredits),
+    rowJudge('外国語科目', 14, foreignCredits),
+    rowJudgeBool('英語 Study Skills 2単位', done('englishStudySkills')),
+    rowJudgeBool('外国語II 6単位', foreign2Done),
+    rowJudgeBool('選択必修の外国語6単位', foreignElectiveDone),
+    rowJudge('専門教育科目 合計', 68, majorCredits),
+    rowJudgeBool('タイプ別必修12単位', requiredFoundationDone),
+    rowJudgeBool('専門基礎の選択必修4単位', foundationElectiveDone),
+    rowJudgeBool('基本科目12単位・3分野以上', basicSummary.requirementDone),
+    rowJudge('自主選択科目', 16, electiveCredits),
+    rowJudge('4年次の12単位判定対象単位', 12, fourthYearCountedCredits)
+  ];
+
+  let rows = [];
+  let s1Label = '進級関連';
+  let s2Label = '卒業関連';
+  let s1 = '未判定';
+  let s2 = '未判定';
+  let c1 = 'warn';
+  let c2 = 'warn';
+  const summary = [];
+
+  if (grade === '1' && semester === 'spring') {
+    rows = [divider('2年進級のために秋までで必要'), ...promotion12Need];
+    const ok = promotion12Need.every(r => r.state === 'OK');
+    s1Label = '2年進級見込み';
+    s2Label = '補足';
+    s1 = ok ? '進級条件に到達見込み' : '秋で不足解消が必要';
+    s2 = '1年春なので1→2進級条件のみ表示';
+    c1 = ok ? 'ok' : 'warn';
+    c2 = 'warn';
+    summary.push('1年春なので、年度末に2年へ進級するための24単位条件を見ています。');
+  } else if (grade === '1' && semester === 'fall') {
+    rows = [divider('2年進級判定'), ...promotion12Judge];
+    const ok = promotion12Judge.every(r => r.state === 'OK');
+    s1Label = '1→2年 進級可否';
+    s2Label = '補足';
+    s1 = ok ? '進級可能' : '進級不可';
+    s2 = ok ? '24単位条件を満たしています' : '24単位未達';
+    c1 = ok ? 'ok' : 'bad';
+    c2 = ok ? 'ok' : 'bad';
+    summary.push('1年秋なので、1→2進級可否を表示しています。');
+  } else if (grade === '2' && semester === 'spring') {
+    rows = [divider('3年進級のために秋までで必要'), ...promotion23Need];
+    const ok = promotion23Need.every(r => r.state === 'OK');
+    s1Label = '3年進級見込み';
+    s2Label = '補足';
+    s1 = ok ? '進級条件に到達見込み' : '秋で不足解消が必要';
+    s2 = '2→3は60単位・基礎4・外国語8・専門基礎10で判定';
+    c1 = ok ? 'ok' : 'warn';
+    c2 = 'warn';
+    summary.push('2年春なので、3年進級に必要な条件の不足を表示しています。');
+    summary.push('2→3ではタイプ別必修を全部そろえていなくても、専門基礎の合計10単位に達していれば条件を満たします。');
+  } else if (grade === '2' && semester === 'fall') {
+    rows = [divider('3年進級判定'), ...promotion23Judge];
+    const ok = promotion23Judge.every(r => r.state === 'OK');
+    s1Label = '2→3年 進級可否';
+    s2Label = '補足';
+    s1 = ok ? '進級可能' : '進級不可';
+    s2 = ok ? '進級条件を満たしています' : '必要条件に未達あり';
+    c1 = ok ? 'ok' : 'bad';
+    c2 = ok ? 'ok' : 'bad';
+    summary.push('2年秋なので、2→3進級可否を表示しています。');
+  } else if (grade === '3' && semester === 'spring') {
+    rows = [divider('4年進級のために秋までで必要'), ...promotion34Need, divider('卒業までの不足'), ...graduationNeedRows];
+    const ok = promotion34Need.every(r => r.state === 'OK');
+    const gradOk = graduationNeedRows.every(r => r.state === 'OK');
+    s1Label = '4年進級見込み';
+    s2Label = '卒業までの不足';
+    s1 = ok ? '進級条件に到達見込み' : '秋で不足解消が必要';
+    s2 = gradOk ? '卒業要件は充足済み' : '卒業要件に不足あり';
+    c1 = ok ? 'ok' : 'warn';
+    c2 = gradOk ? 'ok' : 'warn';
+    summary.push('3年春なので、4年進級条件と卒業条件の不足を並べて表示しています。');
+    summary.push('3→4では専門基礎16単位が見られますが、卒業ではさらにタイプ別必修12単位と選択必修4単位を個別に満たす必要があります。');
+  } else if (grade === '3' && semester === 'fall') {
+    rows = [divider('4年進級判定'), ...promotion34Judge, divider('卒業までの不足'), ...graduationNeedRows];
+    const ok = promotion34Judge.every(r => r.state === 'OK');
+    const gradOk = graduationNeedRows.every(r => r.state === 'OK');
+    s1Label = '3→4年 進級可否';
+    s2Label = '卒業までの不足';
+    s1 = ok ? '進級可能' : '進級不可';
+    s2 = gradOk ? '卒業要件は充足済み' : '卒業要件に不足あり';
+    c1 = ok ? 'ok' : 'bad';
+    c2 = gradOk ? 'ok' : 'warn';
+    summary.push('3年秋なので、3→4進級可否と卒業までの不足を表示しています。');
+  } else if (grade === '4' && semester === 'spring') {
+    rows = [divider('卒業のために秋までで必要'), ...graduationNeedRows];
+    const ok = graduationNeedRows.every(r => r.state === 'OK');
+    s1Label = '卒業見込み';
+    s2Label = '補足';
+    s1 = ok ? '卒業要件は充足済み' : '秋で不足解消が必要';
+    s2 = ok ? '不足なし' : '必要項目あり';
+    c1 = ok ? 'ok' : 'warn';
+    c2 = ok ? 'ok' : 'warn';
+    summary.push('4年春なので、年度末までに卒業するための不足を表示しています。');
+  } else {
+    rows = [divider('卒業判定'), ...graduationJudgeRows];
+    const ok = graduationJudgeRows.every(r => r.state === 'OK');
+    s1Label = '卒業可否';
+    s2Label = '補足';
+    s1 = ok ? '卒業可能' : '卒業不可';
+    s2 = ok ? '主要要件を満たしています' : '要件未達あり';
+    c1 = ok ? 'ok' : 'bad';
+    c2 = ok ? 'ok' : 'bad';
+    summary.push('4年秋なので、入力内容ベースの卒業可否を表示しています。');
+  }
+
+  const missing = rows.filter(r => !r.divider && (r.state === '不足' || r.state === 'NG')).map(r => `${r.label}: ${r.result}`);
+  if (missing.length) {
+    summary.push(`不足項目: ${missing.join('、')}`);
+  } else {
+    summary.push('不足項目はありません。');
+  }
+  summary.push('判定基準は 2026 年度履修案内に合わせていますが、留学認定・相殺・履修上限外扱いは別判定です。');
+
+  return { rows, s1Label, s2Label, s1, s2, c1, c2, summary };
+}
+
+function renderTable(rows){
+  $('detailBody').innerHTML = rows.map(r => r.divider
+    ? `<tr class="divider"><td colspan="5">${r.label}</td></tr>`
+    : `<tr><td>${r.label}</td><td>${r.base}</td><td>${r.current}</td><td>${r.result}</td><td class="${r.state === 'OK' ? 'ok' : (r.state === '不足' ? 'warn' : 'bad')}">${r.state}</td></tr>`
+  ).join('');
+}
+
+function calculate(){
+  const result = buildRows();
+  $('status1Label').textContent = result.s1Label;
+  $('status2Label').textContent = result.s2Label;
+  $('status1').textContent = result.s1;
+  $('status2').textContent = result.s2;
+  $('status1').className = `v ${result.c1}`;
+  $('status2').className = `v ${result.c2}`;
+  $('summary').textContent = result.summary.join('\n\n');
+  renderTable(result.rows);
+}
+
+function attachDynamicEvents(){
+  document.querySelectorAll('#baseCourses input, #foundationRequired input, #foundationElectives input, #specialCourses input, #majorBasicCourses input, #majorSpecialCourses input').forEach(el => {
+    el.addEventListener('change', calculate);
+  });
+}
+
+function addStaticEvents(){
+  staticIds.forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('change', () => {
+      if (id === 'type') updateTypeSections();
+      calculate();
+    });
+    if (el.tagName === 'INPUT') {
+      el.addEventListener('input', calculate);
+    }
+  });
+}
+
+function setChecks(ids, checked = true){
+  ids.forEach(id => {
+    const el = $(id);
+    if (el) el.checked = checked;
+  });
+}
+
+function fillSample(){
+  $('grade').value = '3';
+  $('semester').value = 'spring';
+  $('type').value = 'A';
+  updateTypeSections();
+
+  $('year12OtherCredits').value = '12';
+  $('thirdYearCountedCredits').value = '18';
+  $('fourthYearCountedCredits').value = '0';
+  $('englishStudySkills').value = 'done';
+  $('requiredForeign2Credits').value = '6';
+  $('englishElectiveCredits').value = '2';
+  $('sameLanguageAdvancedCredits').value = '2';
+  $('otherLanguageCredits').value = '0';
+  $('extraForeignCredits').value = '0';
+  $('general1').value = '6';
+  $('general2').value = '8';
+  $('general3').value = '4';
+  $('relatedCredits').value = '6';
+  $('choiceForeignACredits').value = '2';
+  $('peLectureCredits').value = '2';
+  $('peSeminarCredits').value = '0';
+  $('pePracticeCredits').value = '2';
+  $('instituteCredits').value = '0';
+
+  setChecks(typeData.A.baseCourses.map(item => item.id), false);
+  setChecks(['base_stats1','base_stats2','base_calc','base_linear'], true);
+  setChecks(typeData.A.foundationRequired.map(item => item.id), false);
+  setChecks(['req_macro','req_micro'], true);
+  setChecks(typeData.A.foundationElectives.map(item => item.id), false);
+  setChecks(['elec_env','elec_econometrics','elec_social1'], true);
+  setChecks(specialCourses.map(item => item.id), false);
+  setChecks(['special_finance','special_bookkeeping_a'], true);
+  setChecks(majorBasicCourses.map(item => item.id), false);
+  setChecks(['mb_micro1_a','mb_micro2_a','mb_metrics_mid_a','mb_metrics_adv_a','mb_policy_a','mb_public_fin_a'], true);
+  setChecks(majorSpecialCourses.map(item => item.id), false);
+  setChecks(['ms_public_a','ms_econ_stats_a','ms_finance_a','ms_experiment','ms_growth_a'], true);
+
+  calculate();
+}
+
+function resetAll(){
+  $('grade').value = '1';
+  $('semester').value = 'spring';
+  $('type').value = 'A';
+  updateTypeSections();
+
+  [
+    'thirdYearCountedCredits','fourthYearCountedCredits',
+    'requiredForeign2Credits','englishElectiveCredits','sameLanguageAdvancedCredits','otherLanguageCredits','extraForeignCredits',
+    'general1','general2','general3','year12OtherCredits','majorBasicCredits','majorSpecialCredits','relatedCredits','electiveCredits',
+    'choiceForeignACredits','peLectureCredits','peSeminarCredits','pePracticeCredits','instituteCredits'
+  ].forEach(id => $(id).value = '0');
+
+  ['englishStudySkills'].forEach(id => $(id).value = 'done');
+
+  setChecks(typeData.A.baseCourses.map(item => item.id), false);
+  setChecks(typeData.A.foundationRequired.map(item => item.id), false);
+  setChecks(typeData.A.foundationElectives.map(item => item.id), false);
+  setChecks(specialCourses.map(item => item.id), false);
+  setChecks(majorBasicCourses.map(item => item.id), false);
+  setChecks(majorSpecialCourses.map(item => item.id), false);
+
+  updateAutoTotals();
+  $('status1Label').textContent = '進級関連';
+  $('status2Label').textContent = '卒業関連';
+  $('status1').textContent = '未判定';
+  $('status2').textContent = '未判定';
+  $('status1').className = 'v';
+  $('status2').className = 'v';
+  $('summary').textContent = 'まだ判定していません。';
+  $('detailBody').innerHTML = '';
+}
+
+$('calcBtn').addEventListener('click', calculate);
+$('sampleBtn').addEventListener('click', fillSample);
+$('resetBtn').addEventListener('click', resetAll);
+
+addStaticEvents();
+resetAll();
+</script>
+</body>
+</html>
